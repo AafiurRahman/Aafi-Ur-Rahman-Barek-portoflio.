@@ -1,0 +1,1125 @@
+/* ==========================================================================
+   REJOUICE — stylesheet
+   Fonts / colours / type scale kept from the original build.
+   Everything new here serves layout correctness or motion.
+   ========================================================================== */
+
+@font-face {
+  font-family: nb;
+  src: url(./NBInternationalProBoo.woff2) format('woff2'),
+       url(./NBInternationalProBoo.ttf) format('truetype');
+  font-display: swap;
+}
+@font-face {
+  font-family: aafi;
+  src: url(./Rejouice-Headline.woff2) format('woff2'),
+       url(./Rejouice-Headline.ttf) format('truetype');
+  font-display: block;
+}
+@font-face {
+  font-family: lavish;
+  src: url(./Lavish.otf) format('opentype'),
+       url(./Lavish.ttf) format('truetype');
+  font-display: swap;
+}
+
+:root {
+  --black: #000;
+  --white: #fff;
+  --accent: #f2a93d;      /* amber — trading-terminal gold, replaces the agency orange */
+  --accent-2: #35d6b4;    /* teal — secondary data accent, used sparingly */
+  --page4-bg: #fffdfd;   /* original near-white */
+  --footer-bg: #f3ead9;  /* warm parchment, replaces the agency pale blue */
+  --footer-h: 58vh;
+  --gutter: 3vw;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body { font-family: nb, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+h1, h2, h3, h4, h5, h6, button, input, textarea, select { font-family: inherit; }
+
+html { -webkit-text-size-adjust: 100%; }
+
+html, body {
+  width: 100%;
+  background: var(--black);
+}
+
+body { overflow-x: hidden; }
+
+/* Scroll is locked while the intro plays */
+html.is-loading, html.is-loading body { overflow: hidden; }
+
+img, video, svg { display: block; max-width: 100%; }
+
+a { color: inherit; text-decoration: none; }
+
+button {
+  font: inherit;
+  color: inherit;
+  background: none;
+  border: 0;
+  cursor: pointer;
+}
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 4px;
+}
+
+/* Subtle film-grain texture across the whole page — a cheap trick that makes
+   flat black/white sections read as considered rather than default. */
+#grain {
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+  pointer-events: none;
+  opacity: .035;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 140px 140px;
+}
+
+#scroll-progress {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 3px;
+  width: 0%;
+  background: var(--accent);
+  z-index: 58;
+  pointer-events: none;
+}
+
+/* Lenis smooth scroll */
+html.lenis, html.lenis body { height: auto; }
+.lenis.lenis-smooth { scroll-behavior: auto !important; }
+.lenis.lenis-stopped { overflow: hidden; }
+
+/* --------------------------------------------------------------------------
+   Shared motion primitives
+   Initial "hidden" states only apply when JS is confirmed running, so the page
+   is never left blank if the CDN scripts fail to load.
+   -------------------------------------------------------------------------- */
+
+.line { display: block; overflow: hidden; }
+.line > span {
+  display: block;
+  will-change: transform;
+}
+html.js .line > span { transform: translateY(110%); }
+
+html.js .reveal { opacity: 0; }
+
+/* --------------------------------------------------------------------------
+   Loader
+   -------------------------------------------------------------------------- */
+
+#loader {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  background: var(--black);
+  color: var(--white);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 var(--gutter);
+  will-change: transform;
+}
+#loader .loader__word {
+  overflow: hidden;
+  font-family: aafi, Impact, "Arial Narrow", sans-serif;
+  font-size: 9vw;
+  line-height: 1;
+  padding-bottom: .22em;
+  margin-bottom: -.22em;
+}
+#loader .loader__word span { display: block; }
+#loader .loader__count {
+  font-size: 1.4vw;
+  font-variant-numeric: tabular-nums;
+  align-self: flex-end;
+  padding-bottom: var(--gutter);
+}
+#loader .loader__count span::after { content: '%'; }
+html.js #loader .loader__word span { transform: translateY(110%); }
+html:not(.js) #loader { display: none; }
+
+/* --------------------------------------------------------------------------
+   Cursor
+   Three transform layers so nothing fights over the same property:
+     #cursor          -> x / y (follow) + scale (state)
+     .cursor__squash  -> rotation + scaleX/scaleY (velocity)
+     .cursor__label   -> stays upright, never transformed
+   -------------------------------------------------------------------------- */
+
+#cursor {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 7.5vw;
+  width: 7.5vw;
+  min-height: 84px;
+  min-width: 84px;
+  z-index: 9;
+  pointer-events: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  will-change: transform;
+  opacity: 0;
+}
+.cursor__squash {
+  position: absolute;
+  inset: 0;
+  will-change: transform;
+}
+.cursor__ball {
+  height: 100%;
+  width: 100%;
+  border-radius: 50%;
+  background: var(--accent);
+}
+.cursor__label {
+  position: relative;
+  font-size: max(12px, 1.15vw);
+  font-weight: 500;
+  color: var(--black);
+  white-space: nowrap;
+}
+
+/* Trackpad/mouse only — a follower cursor is meaningless on touch. */
+@media (hover: none), (pointer: coarse) {
+  #cursor { display: none; }
+  #page1, #page1 * { cursor: auto; }
+}
+
+/* --------------------------------------------------------------------------
+   #main sits above the fixed footer
+   -------------------------------------------------------------------------- */
+
+#main {
+  position: relative;
+  z-index: 2;
+  background: var(--white);
+  margin-bottom: var(--footer-h);
+}
+
+/* --------------------------------------------------------------------------
+   Page 1
+   -------------------------------------------------------------------------- */
+
+#page1 {
+  height: 100vh;
+  height: 100svh;
+  width: 100%;
+  background-color: var(--black);
+  position: relative;
+  overflow: hidden;
+}
+/* the orange ball replaces the pointer inside the hero only */
+@media (hover: hover) and (pointer: fine) {
+  #page1, #page1 * { cursor: none; }
+}
+#page1 .page1__bg {
+  height: 100%;
+  width: 100%;
+  object-fit: cover;
+  position: absolute;
+  inset: 0;
+  will-change: transform;
+}
+#page1-content {
+  height: 100%;
+  width: 100%;
+  position: relative;
+  z-index: 10;
+  color: var(--white);
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  justify-content: space-between;
+  pointer-events: none;
+}
+#page1-content nav, #page1-content .menu-toggle, #page1-content .hero-cta { pointer-events: auto; }
+
+/* Full-bleed hit area so the reel click works anywhere on the hero. */
+#reel-open {
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+}
+#reel-open:focus-visible { outline-offset: -10px; }
+
+nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: var(--gutter);
+}
+nav h3 { font-size: 1.4vw; font-weight: 100; }
+nav .menu-toggle {
+  position: relative;
+  width: 2.4em;
+  height: 2.4em;
+  font-size: 1.1vw;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  transition: background .4s ease;
+}
+nav .menu-toggle:hover,
+nav .menu-toggle:focus-visible { background: rgba(255, 255, 255, .1); }
+
+.menu-toggle__bars {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: .34em;
+  width: 1.5em;
+}
+.menu-toggle__bars span {
+  display: block;
+  height: 1.5px;
+  width: 100%;
+  background: currentColor;
+  transition: transform .5s cubic-bezier(.65, 0, .35, 1), opacity .3s ease;
+}
+html.is-menu-open .menu-toggle__bars span:nth-child(1) { transform: translateY(.42em) rotate(45deg); }
+html.is-menu-open .menu-toggle__bars span:nth-child(2) { opacity: 0; }
+html.is-menu-open .menu-toggle__bars span:nth-child(3) { transform: translateY(-.42em) rotate(-45deg); }
+
+.hero-type {
+  display: flex;
+  font-family: aafi, Impact, "Arial Narrow", sans-serif;
+  font-size: 27vw;
+  font-weight: 100;
+  line-height: 1;
+}
+.hero-type .h-char {
+  display: block;
+  overflow: hidden;
+  /* padding extends the clip box past the descenders so 'j' is never cut,
+     the negative margin keeps the layout identical */
+  padding: .08em 0 .22em;
+  margin: -.08em 0 -.22em;
+}
+.hero-type .h-char > i {
+  display: block;
+  font-family: aafi, Impact, "Arial Narrow", sans-serif;
+  font-style: normal;
+  will-change: transform;
+}
+html.js .hero-type .h-char > i { transform: translateY(110%); }
+
+.hero-bottom {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+.hero-cta {
+  margin-top: 1.4vw;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.2vw;
+  text-align: center;
+}
+.hero-cta__tagline {
+  font-size: 1.15vw;
+  font-weight: 300;
+  opacity: .85;
+}
+.hero-cta__row {
+  display: flex;
+  gap: 1vw;
+}
+.hero-cta__btn {
+  display: inline-block;
+  font-size: max(12px, 1vw);
+  padding: .85em 1.8em;
+  border-radius: 999px;
+  will-change: transform;
+  transition: background .4s ease, color .4s ease, border-color .4s ease;
+}
+.hero-cta__btn--primary {
+  background: var(--white);
+  color: var(--black);
+}
+.hero-cta__btn--primary:hover,
+.hero-cta__btn--primary:focus-visible {
+  background: var(--accent);
+  color: var(--black);
+}
+.hero-cta__btn--secondary {
+  border: 1px solid rgba(255, 255, 255, .4);
+  color: var(--white);
+}
+.hero-cta__btn--secondary:hover,
+.hero-cta__btn--secondary:focus-visible {
+  background: var(--white);
+  color: var(--black);
+  border-color: var(--white);
+}
+
+.hero-name {
+  margin-top: .3vw;
+  font-size: 1.3vw;
+  font-weight: 400;
+  letter-spacing: .32em;
+  text-transform: uppercase;
+  color: var(--white);
+  opacity: .7;
+}
+
+.scroll-cue {
+  position: absolute;
+  left: 50%;
+  bottom: 1.6vw;
+  transform: translateX(-50%);
+  width: 1px;
+  height: 3.4vw;
+  background: rgba(255, 255, 255, .3);
+  overflow: hidden;
+}
+.scroll-cue > span {
+  position: absolute;
+  top: -100%;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: var(--accent);
+  animation: scrollCue 2.4s ease-in-out infinite;
+}
+@keyframes scrollCue {
+  0%   { top: -100%; }
+  55%  { top: 100%; }
+  100% { top: 100%; }
+}
+
+/* --------------------------------------------------------------------------
+   Page 2
+   -------------------------------------------------------------------------- */
+
+#page2 {
+  background: var(--white);
+  padding: 8vw 0 10vw;
+  overflow: hidden;
+}
+
+/* Client marquee */
+.marquee {
+  overflow: hidden;
+  border-top: 1px solid rgba(0, 0, 0, .12);
+  border-bottom: 1px solid rgba(0, 0, 0, .12);
+  padding: 2.2vw 0;
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent);
+          mask-image: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent);
+}
+.marquee__track {
+  display: flex;
+  width: max-content;
+  will-change: transform;
+}
+.marquee__group {
+  display: flex;
+  align-items: center;
+  flex: 0 0 auto;
+}
+.marquee__group .tag {
+  display: inline-block;
+  white-space: nowrap;
+  font-size: 1.05vw;
+  font-weight: 500;
+  letter-spacing: .01em;
+  margin: 0 2.4vw;
+  opacity: .55;
+  transition: opacity .5s ease;
+}
+.marquee__group .tag:nth-child(odd)  { color: var(--accent); }
+.marquee__group .tag:nth-child(even) { color: var(--accent-2); }
+.marquee:hover .marquee__group .tag { opacity: .3; }
+.marquee__group .tag:hover { opacity: 1; }
+
+#page2-heading {
+  width: 86%;
+  margin: 8vw 0 0 var(--gutter);
+  font-size: 3.1vw;
+  line-height: 1.42;
+  font-weight: 400;
+  color: var(--black);
+}
+#page2-heading .line + .line { margin-top: .1em; }
+#page2-heading i,
+#page2-heading i > span {
+  font-family: lavish, Georgia, "Times New Roman", serif;
+  font-style: italic;
+}
+#page2-heading u > span {
+  text-decoration: underline;
+  text-decoration-color: var(--accent);
+  text-decoration-thickness: 2px;
+  text-underline-offset: .18em;
+}
+#page2-heading h2 {
+  font-size: inherit;
+  font-weight: inherit;
+}
+
+/* --------------------------------------------------------------------------
+   Page 3
+   -------------------------------------------------------------------------- */
+
+#page3 {
+  min-height: 100vh;
+  width: 100%;
+  position: relative;
+  padding: var(--gutter);
+  background: var(--white);
+  color: var(--black);
+}
+#page3-top { text-align: center; }
+#page3-top h4 {
+  margin-bottom: 1vw;
+  font-size: 1vw;
+  font-weight: 500;
+}
+#page3-top h4 b {
+  font-size: .78vw;
+  font-weight: 500;
+  background-color: var(--black);
+  color: var(--white);
+  padding: .3em .8em;
+  border-radius: 10px;
+  margin: 0 .2em;
+}
+#page3-top h2 {
+  font-size: 4vw;
+  font-weight: 500;
+  line-height: 1.1;
+}
+#page3-elements {
+  height: 75vh;
+  min-height: 420px;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.25%;
+  margin-top: 8vw;
+}
+#page3-elements .box {
+  height: 100%;
+  width: 32.5%;
+  position: relative;
+  overflow: hidden;
+  will-change: transform;
+}
+html.js #page3-elements .box { clip-path: inset(100% 0% 0% 0%); }
+#page3-elements .box img {
+  position: absolute;
+  inset: 0;
+  height: 100%;
+  width: 100%;
+  object-fit: cover;
+  object-position: center;
+  transition: transform 1.4s cubic-bezier(.16, 1, .3, 1);
+}
+#page3-elements .box:hover img {
+  transform: scale(1.08);
+}
+.box__title {
+  position: absolute;
+  left: 1.4vw;
+  bottom: 1.2vw;
+  z-index: 2;
+  color: var(--white);
+  font-size: 1.15vw;
+  font-weight: 500;
+  mix-blend-mode: difference;
+}
+.box__meta {
+  position: absolute;
+  left: 1.4vw;
+  bottom: 2.9vw;
+  z-index: 2;
+  max-width: 85%;
+  color: var(--white);
+  font-size: .68vw;
+  line-height: 1.45;
+  opacity: .85;
+  mix-blend-mode: difference;
+}
+
+/* --------------------------------------------------------------------------
+   Page 4
+   Original near-white background. The ring strokes were #fff on #fffdfd and
+   so invisible — they are dark now, which is the only way the draw-on
+   animation reads against this background.
+   -------------------------------------------------------------------------- */
+
+#page4 {
+  min-height: 100vh;
+  width: 100%;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 4vw;
+  padding: 0 var(--gutter);
+  background-color: var(--page4-bg);
+  color: var(--black);
+  overflow: hidden;
+}
+.page4-content { position: relative; z-index: 2; max-width: 34vw; }
+.page4-content h4.line {
+  font-size: 1vw;
+  font-weight: 500;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  opacity: .55;
+  margin-bottom: 1.1vw;
+}
+.page4-content h2.line {
+  font-size: 2.5vw;
+  font-weight: 500;
+  line-height: 1.15;
+  margin-bottom: 1.3vw;
+}
+.page4-content p.line {
+  font-size: 1.05vw;
+  line-height: 1.55;
+  opacity: .72;
+}
+.page4-content p.line + p.line { margin-top: .15em; }
+.page4-content .page4-impact {
+  font-family: lavish, Georgia, "Times New Roman", serif;
+  font-style: italic;
+  opacity: .9;
+}
+.page4-content .page4-impact:first-of-type { margin-top: 1vw; }
+
+.page4-visual {
+  position: relative;
+  flex: 0 0 auto;
+  height: 62vh;
+  width: 45%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: visible;
+}
+.page4-visual .page4__ball {
+  height: 46%;
+  width: auto;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: var(--accent);
+  will-change: transform;
+}
+.page4-visual .ring,
+.page4-visual .orbit {
+  position: absolute;
+  height: 65%;
+  width: auto;
+  aspect-ratio: 1;
+  overflow: visible;
+}
+.page4-visual .ring { transform: rotate(-90deg); }
+.page4-visual .ring circle {
+  fill: none;
+  stroke: var(--accent);
+  stroke-width: .25;
+  stroke-linecap: round;
+}
+.page4-visual .ring__track { opacity: .18; }
+.page4-visual .orbit circle { fill: var(--accent); }
+
+/* --------------------------------------------------------------------------
+   Page 5
+   -------------------------------------------------------------------------- */
+
+#page5 {
+  min-height: 100vh;
+  width: 100%;
+  padding: 6vw 0 8vw;
+  position: relative;
+  background: var(--white);
+  color: var(--black);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+#page5 h1 {
+  font-size: 10vw;
+  font-family: lavish, Georgia, "Times New Roman", serif;
+  font-weight: 100;
+  line-height: 1.05;
+  border-bottom: 1px solid var(--black);
+  width: 96%;
+  margin-left: 2%;
+  padding-bottom: .1em;
+}
+#page5 h1 > span { font-family: lavish, Georgia, "Times New Roman", serif; }
+#swiperdiv {
+  width: 96%;
+  margin: 6vw 0 0 2%;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 4vw;
+  flex-wrap: wrap;
+}
+.contact {
+  display: inline-block;
+  font-size: 3.4vw;
+  line-height: 1.1;
+  position: relative;
+  will-change: transform;
+}
+.contact::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: .04em;
+  height: 2px;
+  width: 100%;
+  background: var(--accent);
+  transform: scaleX(0);
+  transform-origin: right;
+  transition: transform .7s cubic-bezier(.16, 1, .3, 1);
+}
+.contact:hover::after,
+.contact:focus-visible::after {
+  transform: scaleX(1);
+  transform-origin: left;
+}
+.contact__note {
+  font-size: 1.1vw;
+  max-width: 34ch;
+  line-height: 1.55;
+  opacity: .6;
+}
+
+/* Contact form — static export, so this hands off to a mailto: on submit */
+.contact-form {
+  width: 96%;
+  max-width: 640px;
+  margin: 5vw 0 0 2%;
+  display: flex;
+  flex-direction: column;
+  gap: 1.6vw;
+}
+.contact-form__row { display: flex; gap: 1.6vw; }
+.contact-form__field {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: .4vw;
+  font-size: .95vw;
+}
+.contact-form__field span {
+  opacity: .55;
+  text-transform: uppercase;
+  letter-spacing: .06em;
+  font-size: .75vw;
+}
+.contact-form__field input,
+.contact-form__field textarea {
+  border: 0;
+  border-bottom: 1px solid rgba(0, 0, 0, .25);
+  padding: .5em .1em;
+  font-size: 1vw;
+  background: transparent;
+  transition: border-color .4s ease;
+  resize: vertical;
+}
+.contact-form__field input:focus,
+.contact-form__field textarea:focus {
+  border-bottom-color: var(--accent);
+  outline: none;
+}
+.contact-form__submit {
+  align-self: flex-start;
+  margin-top: .6vw;
+  font-size: max(12px, 1vw);
+  padding: .8em 2em;
+  border-radius: 999px;
+  background: var(--black);
+  color: var(--white);
+  transition: background .4s ease, color .4s ease;
+}
+.contact-form__submit:hover,
+.contact-form__submit:focus-visible {
+  background: var(--accent);
+  color: var(--black);
+}
+
+/* --------------------------------------------------------------------------
+   Footer — fixed behind #main, revealed as the page scrolls off
+   -------------------------------------------------------------------------- */
+
+footer {
+  position: fixed;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  height: var(--footer-h);
+  min-height: 380px;
+  z-index: 1;
+  background-color: var(--footer-bg);
+  color: var(--black);
+  display: flex;
+  align-items: flex-end;
+}
+footer .footer__inner {
+  padding: 40px var(--gutter);
+  width: 100%;
+}
+footer .logo {
+  text-align: center;
+  text-transform: uppercase;
+  font-family: aafi, Impact, "Arial Narrow", sans-serif;
+  font-size: 9vw;
+  line-height: 1;
+  margin-bottom: 6vh;
+  overflow: hidden;
+  padding-bottom: .12em;
+}
+footer .logo > span { display: block; }
+html.js footer .logo > span {
+  transform: translateY(110%);
+}
+footer nav {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0;
+  font-size: 1.1vw;
+}
+footer .social { display: flex; gap: 1.6vw; }
+footer .social a {
+  position: relative;
+  transition: color .4s ease;
+}
+footer .social a:hover { color: #b8791f; }
+
+/* --------------------------------------------------------------------------
+   Side menu
+   Hidden with visibility (not just opacity) so its links stay out of the tab
+   order while closed. GSAP owns the panel transform — there is deliberately
+   no CSS transform here, because a CSS translate would be overwritten the
+   moment GSAP writes xPercent.
+   -------------------------------------------------------------------------- */
+
+/* Sticky toggle for everything below the hero */
+.menu-fab {
+  position: fixed;
+  top: var(--gutter);
+  right: var(--gutter);
+  z-index: 55;
+  width: 3.4em;
+  height: 3.4em;
+  font-size: max(12px, 1.1vw);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  background: var(--black);
+  color: var(--white);
+  opacity: 0;
+  pointer-events: none;
+  transition: background .4s ease, color .4s ease;
+}
+.menu-fab.is-visible { pointer-events: auto; }
+.menu-fab:hover { background: var(--accent); color: var(--black); }
+
+#menu {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  visibility: hidden;
+}
+.menu__backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, .5);
+  opacity: 0;
+  -webkit-backdrop-filter: blur(6px);
+          backdrop-filter: blur(6px);
+}
+.menu__panel {
+  position: absolute;
+  top: 0;
+  right: 0;
+  height: 100%;
+  width: 38vw;
+  min-width: 420px;
+  background: var(--black);
+  color: var(--white);
+  padding: var(--gutter);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 6vh;
+  overflow-y: auto;
+  will-change: transform;
+}
+html:not(.js) .menu__panel { display: none; }
+
+.menu__head {
+  display: flex;
+  justify-content: flex-end;
+}
+.menu__close {
+  font-size: max(12px, 1.1vw);
+  padding: .6em 1.4em;
+  border: 1px solid rgba(255, 255, 255, .35);
+  border-radius: 999px;
+  transition: background .4s ease, color .4s ease, border-color .4s ease;
+}
+.menu__close:hover,
+.menu__close:focus-visible {
+  background: var(--white);
+  border-color: var(--white);
+  color: var(--black);
+}
+
+/* overrides the site-wide `nav` rule */
+.menu__nav {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  width: 100%;
+  padding: 0;
+  gap: .1em;
+}
+.menu__link {
+  display: block;                 /* reveal mask */
+  overflow: hidden;
+  width: 100%;
+  padding: .06em 0 .12em;
+  margin: -.06em 0 -.12em;
+}
+.menu__link > span {              /* GSAP moves this on open */
+  display: block;
+  will-change: transform;
+}
+html.js .menu__link > span { transform: translateY(110%); }
+.menu__link > span > i {          /* CSS owns the hover, so nothing collides */
+  display: block;
+  font-style: normal;
+  font-size: 3.4vw;
+  font-weight: 100;
+  line-height: 1.25;
+  transition: transform .7s cubic-bezier(.16, 1, .3, 1), color .5s ease;
+}
+.menu__link:hover > span > i,
+.menu__link:focus-visible > span > i {
+  transform: translateX(1.4vw);
+  color: var(--accent);
+}
+.menu__link.is-active > span > i { color: var(--accent); }
+.menu__link.is-active > span > i::before {
+  content: '';
+  display: inline-block;
+  width: .5vw;
+  height: .5vw;
+  margin-right: .9vw;
+  border-radius: 50%;
+  background: var(--accent);
+  vertical-align: middle;
+}
+
+.menu__meta {
+  display: flex;
+  flex-direction: column;
+  gap: 1.4vw;
+  font-size: max(12px, 1.05vw);
+}
+.menu__mail {
+  font-size: max(15px, 1.5vw);
+  position: relative;
+  display: inline-block;
+  width: fit-content;
+}
+.menu__mail::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: -.15em;
+  height: 1px;
+  width: 100%;
+  background: var(--accent);
+  transform: scaleX(0);
+  transform-origin: right;
+  transition: transform .6s cubic-bezier(.16, 1, .3, 1);
+}
+.menu__mail:hover::after,
+.menu__mail:focus-visible::after {
+  transform: scaleX(1);
+  transform-origin: left;
+}
+.menu__social {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.6vw;
+  opacity: .55;
+}
+.menu__social a { transition: color .4s ease, opacity .4s ease; }
+.menu__social a:hover { color: var(--accent); }
+
+/* Scroll is locked while the menu is open */
+html.is-menu-open, html.is-menu-open body { overflow: hidden; }
+
+/* The reel has its own close button in the same corner */
+html.is-reel-open .menu-fab { opacity: 0 !important; pointer-events: none; }
+
+/* --------------------------------------------------------------------------
+   Reel overlay
+   -------------------------------------------------------------------------- */
+
+#reel {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  background: var(--black);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  visibility: hidden;
+  opacity: 0;
+  clip-path: inset(50% 0% 50% 0%);
+}
+#reel video {
+  height: 100%;
+  width: 100%;
+  object-fit: contain;
+}
+#reel-close {
+  position: absolute;
+  top: var(--gutter);
+  right: var(--gutter);
+  color: var(--white);
+  font-size: 1.2vw;
+  padding: .6em 1.2em;
+  border: 1px solid rgba(255, 255, 255, .35);
+  border-radius: 999px;
+  transition: background .4s ease, color .4s ease;
+}
+#reel-close:hover {
+  background: var(--white);
+  color: var(--black);
+}
+
+/* --------------------------------------------------------------------------
+   Responsive
+   -------------------------------------------------------------------------- */
+
+@media (max-width: 900px) {
+  :root { --gutter: 6vw; --footer-h: 70vh; }
+
+  nav h3, nav .menu-toggle { font-size: 3.4vw; }
+  .hero-type { font-size: 30vw; }
+  .hero-cta__tagline { font-size: 3.8vw; }
+  .hero-name { font-size: 3.4vw; letter-spacing: .22em; margin-top: 1.4vw; }
+  .scroll-cue { display: none; }
+  .hero-cta__row { flex-direction: column; gap: 3vw; width: 100%; align-items: center; }
+  .hero-cta__btn { font-size: 3.8vw; padding: .9em 2em; width: 78%; text-align: center; }
+
+  #loader .loader__word { font-size: 16vw; }
+  #loader .loader__count { font-size: 3.4vw; }
+
+  #page2 { padding: 16vw 0 18vw; }
+  .marquee__group .tag { font-size: 4vw; margin: 0 6vw; }
+  #page2-heading {
+    width: 88%;
+    margin-top: 16vw;
+    font-size: 5.6vw;
+    line-height: 1.38;
+  }
+
+  #page3-top h4 { font-size: 3vw; }
+  #page3-top h4 b { font-size: 2.4vw; }
+  #page3-top h2 { font-size: 8vw; }
+  #page3-elements {
+    flex-direction: column;
+    height: auto;
+    min-height: 0;
+    gap: 4vw;
+    margin-top: 14vw;
+  }
+  #page3-elements .box { width: 100%; height: 58vh; }
+  .box__title { font-size: 3.6vw; left: 4vw; bottom: 4vw; }
+  .box__meta { font-size: 2.4vw; left: 4vw; bottom: 8.6vw; max-width: 90%; }
+
+  #page4 {
+    flex-direction: column;
+    justify-content: center;
+    height: auto;
+    min-height: 100vh;
+    gap: 10vw;
+    padding: 20vw var(--gutter) 14vw;
+  }
+  .page4-content { max-width: 100%; }
+  .page4-content h4.line { font-size: 3vw; }
+  .page4-content h2.line { font-size: 7.5vw; }
+  .page4-content p.line { font-size: 4vw; }
+  .page4-visual { width: 82%; height: 46vh; }
+  .page4-visual .page4__ball { height: auto; width: 62%; }
+  .page4-visual .ring, .page4-visual .orbit { height: auto; width: 82%; }
+
+  #page5 h1 { font-size: 15vw; }
+  #swiperdiv { flex-direction: column; align-items: flex-start; gap: 8vw; }
+  .contact { font-size: 6.4vw; }
+  .contact__note { font-size: 3.6vw; max-width: 40ch; }
+  .contact-form { width: 96%; margin-top: 10vw; gap: 5vw; }
+  .contact-form__row { flex-direction: column; gap: 5vw; }
+  .contact-form__field { font-size: 3.2vw; }
+  .contact-form__field span { font-size: 2.6vw; }
+  .contact-form__field input, .contact-form__field textarea { font-size: 3.6vw; }
+  .contact-form__submit { font-size: 3.6vw; width: 100%; text-align: center; }
+
+  .menu-fab { font-size: 3.2vw; }
+  .menu__panel { width: 100%; min-width: 0; }
+  .menu__close { font-size: 3.4vw; }
+  .menu__link > span > i { font-size: 9.5vw; }
+  .menu__link.is-active > span > i::before { width: 1.6vw; height: 1.6vw; margin-right: 2.4vw; }
+  .menu__link:hover > span > i { transform: none; }
+  .menu__meta { gap: 5vw; font-size: 3.4vw; }
+  .menu__mail { font-size: 5vw; }
+  .menu__social { gap: 5vw; }
+
+  footer .logo { font-size: 16vw; }
+  footer nav { font-size: 3.2vw; }
+  footer .social { gap: 5vw; }
+  #reel-close { font-size: 3.6vw; }
+}
+
+/* --------------------------------------------------------------------------
+   Reduced motion — keep the layout, drop the movement
+   -------------------------------------------------------------------------- */
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .01ms !important;
+  }
+  #cursor { display: none; }
+  #loader { display: none; }
+  #page1, #page1 * { cursor: auto !important; }
+  html.js .line > span,
+  html.js .hero-type .h-char > i,
+  html.js footer .logo > span { transform: none; }
+  html.js #page3-elements .box { clip-path: none; }
+  html.js .menu__link > span { transform: none; }
+  html.js .reveal { opacity: 1; }
+}

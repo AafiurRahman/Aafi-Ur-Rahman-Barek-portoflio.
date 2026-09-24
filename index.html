@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Aafi ur Rahman &mdash; Macroeconomic Researcher, Trader &amp; Developer</title>
+<meta name="description" content="Aafi ur Rahman bridges macroeconomic research and market execution — tracking Fed policy, CPI, and employment data, and building the tools to trade on it.">
+
+<!-- Original favicon (BIG_DAY_FAVICON_2.webp) wasn't in the export — add your own .webp/.ico here and restore this tag. -->
+
+<link rel="preload" href="./Rejouice-Headline.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="./NBInternationalProBoo.woff2" as="font" type="font/woff2" crossorigin>
+
+<link rel="stylesheet" href="style.css">
+
+<!-- Marks that JS is running, so the CSS can safely hide elements that JS will animate in.
+     If the scripts fail, script.js removes this class and everything stays visible. -->
+<script>document.documentElement.classList.add('js');</script>
+</head>
+
+<body>
+
+<div id="grain" aria-hidden="true"></div>
+<div id="scroll-progress" aria-hidden="true"></div>
+
+<!-- ============ intro ============ -->
+<div id="loader" aria-hidden="true">
+  <div class="loader__word"><span>aafiur</span></div>
+  <div class="loader__count"><span data-count>0</span></div>
+</div>
+
+<div id="main">
+
+  <!-- ============ page 1 : hero ============ -->
+  <section id="page1" data-cursor-zone>
+    <!-- Growth-chart HUD loop (Mixkit, free/personal-use tier) — the "growth" video, doubling as the missing hero background. -->
+    <video class="page1__bg" src="https://assets.mixkit.co/videos/5396/5396-720.mp4" poster="https://assets.mixkit.co/videos/5396/5396-thumb-720-0.jpg" autoplay loop muted playsinline preload="auto"></video>
+
+    <!-- custom cursor: z-index 9 keeps the ball behind the wordmark (z-index 10) -->
+    <div id="cursor" aria-hidden="true">
+      <div class="cursor__squash"><div class="cursor__ball"></div></div>
+      <h5 class="cursor__label">Watch reel</h5>
+    </div>
+
+    <div id="page1-content">
+      <nav>
+        <h3 class="reveal">Hi, I&rsquo;m Aafi Ur Rahman.</h3>
+        <button type="button" class="menu-toggle reveal" data-cursor-shrink data-menu-toggle
+                aria-controls="menu" aria-expanded="false" aria-label="Menu">
+          <span class="menu-toggle__bars" aria-hidden="true"><span></span><span></span><span></span></span>
+        </button>
+      </nav>
+
+      <div class="hero-bottom">
+        <h1 class="hero-type" aria-label="aafiur">
+          <span class="h-char" aria-hidden="true"><i>a</i></span><span class="h-char" aria-hidden="true"><i>a</i></span><span class="h-char" aria-hidden="true"><i>f</i></span><span class="h-char" aria-hidden="true"><i>i</i></span><span class="h-char" aria-hidden="true"><i>u</i></span><span class="h-char" aria-hidden="true"><i>r</i></span>
+        </h1>
+        <h2 class="hero-name reveal">Aafi Ur Rahman</h2>
+
+        <div class="hero-cta reveal">
+          <p class="hero-cta__tagline">Macroeconomic Researcher, Trader &amp; Developer.</p>
+          <div class="hero-cta__row">
+            <a class="hero-cta__btn hero-cta__btn--primary" href="#page4" data-scroll-to="#page4" data-magnetic>View My Work</a>
+            <a class="hero-cta__btn hero-cta__btn--secondary" href="#page5" data-scroll-to="#page5" data-magnetic>Get in Touch</a>
+          </div>
+        </div>
+
+        <div class="scroll-cue reveal" aria-hidden="true"><span></span></div>
+      </div>
+    </div>
+
+    <button type="button" id="reel-open" aria-label="Play showreel"></button>
+  </section>
+
+  <!-- ============ page 2 : about ============ -->
+  <section id="page2">
+    <div id="page2-slideshow" aria-label="Core focus areas">
+      <div class="marquee">
+        <div class="marquee__track">
+          <div class="marquee__group">
+            <span class="tag">FRED API</span><span class="tag">VS Code</span><span class="tag">FOMC Policy</span><span class="tag">Core CPI</span><span class="tag">NFP</span><span class="tag">Fed Rate Decisions</span><span class="tag">Employment Data</span><span class="tag">Core PCE</span>
+          </div>
+          <div class="marquee__group" aria-hidden="true">
+            <span class="tag">FRED API</span><span class="tag">VS Code</span><span class="tag">FOMC Policy</span><span class="tag">Core CPI</span><span class="tag">NFP</span><span class="tag">Fed Rate Decisions</span><span class="tag">Employment Data</span><span class="tag">Core PCE</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="page2-heading">
+      <i class="line"><span>Translating complex macroeconomic indicators&mdash;</span></i>
+      <h2 class="line"><span>from FOMC policy to employment data&mdash;into</span></h2>
+      <h2 class="line"><span>actionable market strategies and real-time analytical tools.</span></h2>
+      <h2 class="line"><span>I bridge the gap between high-level economic theory</span></h2>
+      <h2 class="line"><span>and practical financial market execution.</span></h2>
+      <h2 class="line"><span>My day-to-day involves deep-dive analysis into inflation</span></h2>
+      <u class="line"><span>metrics (Core MoM/YoY CPI), central bank policy shifts,</span></u>
+      <h2 class="line"><span>and global employment reports to anticipate market movements.</span></h2>
+      <h2 class="line"><span>Beyond research, I actively build the infrastructure needed</span></h2>
+      <h2 class="line"><span>to process this data, ensuring that trading decisions</span></h2>
+      <h2 class="line"><span>are backed by real-time, highly organized data streams.</span></h2>
+      <h2 class="line"><span>Currently in client experience and lead generation</span></h2>
+      <h2 class="line"><span>at ICCS DigiX, building on a BBA from Jamia Millia Islamia.</span></h2>
+    </div>
+  </section>
+
+  <!-- ============ page 3 : skills & expertise ============ -->
+  <section id="page3">
+    <div id="page3-top">
+      <h4 class="line"><span>Analysis, Code &amp; Execution <b>Skills</b>&#10549;</span></h4>
+      <h2 class="line"><span>Where research meets</span></h2>
+      <h2 class="line"><span>real-time execution.</span></h2>
+    </div>
+
+    <div id="page3-elements">
+      <article class="box">
+        <img src="https://images.unsplash.com/photo-1773266110858-acb9b6c43b15?w=900&auto=format&fit=crop&q=60" alt="Financial market data displayed across trading screens">
+        <h3 class="box__title">Market Analysis</h3>
+        <p class="box__meta">Macroeconomic Forecasting &middot; Fed Policy Tracking &middot; CPI &amp; Inflation Analysis</p>
+      </article>
+      <article class="box">
+        <img src="https://images.unsplash.com/photo-1774901128276-1eab48f1fb9c?w=900&auto=format&fit=crop&q=60" alt="Code editor showing a live development environment">
+        <h3 class="box__title">Technical Development</h3>
+        <p class="box__meta">API Integration &middot; Custom Dashboard Architecture &middot; VS Code Environments</p>
+      </article>
+      <article class="box">
+        <img src="https://images.unsplash.com/photo-1767424412548-1a1ac7f4b9bc?w=900&auto=format&fit=crop&q=60" alt="Trading charts displayed across multiple screens">
+        <h3 class="box__title">Trading</h3>
+        <p class="box__meta">Strategy Formulation &middot; Data-Driven Execution &middot; Risk Management</p>
+      </article>
+    </div>
+  </section>
+
+  <!-- ============ page 4 : selected work / projects ============ -->
+  <section id="page4">
+    <div id="page4-content" class="page4-content">
+      <h4 class="line"><span>Selected Work</span></h4>
+      <h2 class="line"><span>The Macro Command Center</span></h2>
+      <p class="line"><span>A custom-built, comprehensive dashboard designed to</span></p>
+      <p class="line"><span>track, visualize, and analyze live macroeconomic data.</span></p>
+      <p class="line"><span>Built using VS Code, integrating live financial data</span></p>
+      <p class="line"><span>streams and leveraging the St. Louis Fed (FRED) API</span></p>
+      <p class="line"><span>for robust historical and real-time economic indicators.</span></p>
+      <p class="line page4-impact"><span>Streamlines the digestion of complex market data into</span></p>
+      <p class="line page4-impact"><span>a single, unified interface for rapid decision-making.</span></p>
+    </div>
+
+    <div class="page4-visual">
+      <div class="page4__ball"></div>
+      <svg class="ring" viewBox="0 0 100 100" aria-hidden="true">
+        <circle class="ring__track" cx="50" cy="50" r="49"></circle>
+        <circle class="ring__draw"  cx="50" cy="50" r="49"></circle>
+      </svg>
+      <svg class="orbit" viewBox="0 0 100 100" aria-hidden="true">
+        <circle cx="50" cy="1" r="1.1"></circle>
+      </svg>
+    </div>
+  </section>
+
+  <!-- ============ page 5 : contact ============ -->
+  <section id="page5">
+    <h1 class="line"><span>Let&rsquo;s Connect.</span></h1>
+    <div id="swiperdiv">
+      <a class="contact" href="mailto:aafiurrahman531@gmail.com" data-magnetic data-cursor-shrink>aafiurrahman531@gmail.com</a>
+      <p class="contact__note">Whether you are looking to collaborate on market research, discuss custom analytical tools, or talk macro strategy, my inbox is open.</p>
+    </div>
+
+    <!-- Static export, no backend: submitting opens a pre-filled email instead. Swap for Formspree/Netlify Forms/your own endpoint to collect messages directly. -->
+    <form id="contact-form" class="contact-form">
+      <div class="contact-form__row">
+        <label class="contact-form__field">
+          <span>Name</span>
+          <input type="text" name="name" autocomplete="name" required>
+        </label>
+        <label class="contact-form__field">
+          <span>Email</span>
+          <input type="email" name="email" autocomplete="email" required>
+        </label>
+      </div>
+      <label class="contact-form__field">
+        <span>Message</span>
+        <textarea name="message" rows="4" required></textarea>
+      </label>
+      <button type="submit" class="contact-form__submit">Send Message</button>
+    </form>
+  </section>
+
+</div><!-- /#main -->
+
+<!-- ============ footer ============ -->
+<footer>
+  <div class="footer__inner">
+    <div class="logo"><span>Aafi Ur Rahman</span></div>
+    <nav>
+      <a href="#">&copy; Aafi Ur Rahman 2026</a>
+      <div class="social">
+        <a href="https://linkedin.com/in/aafibarek" target="_blank" rel="noopener" aria-label="LinkedIn">In</a>
+        <a href="https://github.com/AafiurRahman" target="_blank" rel="noopener" aria-label="GitHub"><!-- TODO: add your GitHub profile URL -->Git</a>
+        <a href="https://drive.google.com/file/d/1_I_JYcx24LUg-XcG1Yw3CkV3ewsEthoc/view?pli=1" target="_blank" rel="noopener" aria-label="Resume"><!-- TODO: add your Warm and Creative Studio Fiverr URL -->CV</a>
+      </div>
+    </nav>
+  </div>
+</footer>
+
+<!-- ============ persistent menu button (appears past the hero) ============ -->
+<button type="button" class="menu-fab" data-menu-toggle
+        aria-controls="menu" aria-expanded="false" aria-label="Menu">
+  <span class="menu-toggle__bars" aria-hidden="true"><span></span><span></span><span></span></span>
+</button>
+
+<!-- ============ side menu ============ -->
+<div id="menu" aria-hidden="true">
+  <div class="menu__backdrop"></div>
+
+  <aside class="menu__panel" role="dialog" aria-modal="true" aria-label="Site menu">
+    <div class="menu__head">
+      <button type="button" class="menu__close" aria-label="Close menu">Close</button>
+    </div>
+
+    <nav class="menu__nav">
+      <a class="menu__link" href="#page2" data-scroll-to="#page2"><span><i>About</i></span></a>
+      <a class="menu__link" href="#page3" data-scroll-to="#page3"><span><i>Skills</i></span></a>
+      <a class="menu__link" href="#page4" data-scroll-to="#page4"><span><i>Projects</i></span></a>
+      <a class="menu__link" href="#page5" data-scroll-to="#page5"><span><i>Contact</i></span></a>
+    </nav>
+
+    <div class="menu__meta">
+      <a class="menu__mail" href="mailto:aafiurrahman531@gmail.com">aafiurrahman531@gmail.com</a>
+      <div class="menu__social">
+        <a href="https://linkedin.com/in/aafibarek" target="_blank" rel="noopener" aria-label="LinkedIn">LinkedIn</a>
+        <a href="https://github.com/AafiurRahman" target="_blank" rel="noopener" aria-label="GitHub">GitHub</a>
+        <a href="https://drive.google.com/file/d/1_I_JYcx24LUg-XcG1Yw3CkV3ewsEthoc/view?pli=1" target="_blank" rel="noopener" aria-label="Resume">Resume</a>
+      </div>
+    </div>
+  </aside>
+</div>
+
+<!-- ============ reel overlay ============ -->
+<div id="reel" aria-hidden="true">
+  <video id="reel-video" src="https://assets.mixkit.co/videos/5396/5396-720.mp4" poster="https://assets.mixkit.co/videos/5396/5396-thumb-720-0.jpg" loop playsinline preload="none"></video>
+  <button type="button" id="reel-close" aria-label="Close showreel">Close</button>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/lenis@1.1.14/dist/lenis.min.js"></script>
+<script src="script.js"></script>
+</body>
+</html>
