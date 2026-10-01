@@ -33,13 +33,17 @@
 
   <!-- ============ page 1 : hero ============ -->
   <section id="page1" data-cursor-zone>
-    <!-- Growth-chart HUD loop (Mixkit, free/personal-use tier) — the "growth" video, doubling as the missing hero background. -->
-    <video class="page1__bg" src="https://assets.mixkit.co/videos/5396/5396-720.mp4" poster="https://assets.mixkit.co/videos/5396/5396-thumb-720-0.jpg" autoplay loop muted playsinline preload="auto"></video>
+    <div class="page1__bg" aria-hidden="true">
+      <span class="page1__glow page1__glow--a"></span>
+      <span class="page1__glow page1__glow--b"></span>
+      <span class="page1__glow page1__glow--c"></span>
+      <span class="page1__grid"></span>
+    </div>
 
     <!-- custom cursor: z-index 9 keeps the ball behind the wordmark (z-index 10) -->
     <div id="cursor" aria-hidden="true">
       <div class="cursor__squash"><div class="cursor__ball"></div></div>
-      <h5 class="cursor__label">Watch reel</h5>
+      <h5 class="cursor__label">Scroll</h5>
     </div>
 
     <div id="page1-content">
@@ -68,8 +72,6 @@
         <div class="scroll-cue reveal" aria-hidden="true"><span></span></div>
       </div>
     </div>
-
-    <button type="button" id="reel-open" aria-label="Play showreel"></button>
   </section>
 
   <!-- ============ page 2 : about ============ -->
@@ -195,8 +197,8 @@
       <a href="#">&copy; Aafi Ur Rahman 2026</a>
       <div class="social">
         <a href="https://linkedin.com/in/aafibarek" target="_blank" rel="noopener" aria-label="LinkedIn">In</a>
-        <a href="https://github.com/AafiurRahman" target="_blank" rel="noopener" aria-label="GitHub"><!-- TODO: add your GitHub profile URL -->Git</a>
-        <a href="https://drive.google.com/file/d/1_I_JYcx24LUg-XcG1Yw3CkV3ewsEthoc/view?pli=1" target="_blank" rel="noopener" aria-label="Resume"><!-- TODO: add your Warm and Creative Studio Fiverr URL -->CV</a>
+        <a href="#" target="_blank" rel="noopener" aria-label="GitHub"><!-- TODO: add your GitHub profile URL -->Git</a>
+        <a href="#" target="_blank" rel="noopener" aria-label="Fiverr"><!-- TODO: add your Warm and Creative Studio Fiverr URL -->Fi</a>
       </div>
     </nav>
   </div>
@@ -228,18 +230,13 @@
       <a class="menu__mail" href="mailto:aafiurrahman531@gmail.com">aafiurrahman531@gmail.com</a>
       <div class="menu__social">
         <a href="https://linkedin.com/in/aafibarek" target="_blank" rel="noopener" aria-label="LinkedIn">LinkedIn</a>
-        <a href="https://github.com/AafiurRahman" target="_blank" rel="noopener" aria-label="GitHub">GitHub</a>
-        <a href="https://drive.google.com/file/d/1_I_JYcx24LUg-XcG1Yw3CkV3ewsEthoc/view?pli=1" target="_blank" rel="noopener" aria-label="Resume">Resume</a>
+        <a href="#" target="_blank" rel="noopener" aria-label="GitHub">GitHub</a>
+        <a href="#" target="_blank" rel="noopener" aria-label="Fiverr">Fiverr</a>
       </div>
     </div>
   </aside>
 </div>
 
-<!-- ============ reel overlay ============ -->
-<div id="reel" aria-hidden="true">
-  <video id="reel-video" src="https://assets.mixkit.co/videos/5396/5396-720.mp4" poster="https://assets.mixkit.co/videos/5396/5396-thumb-720-0.jpg" loop playsinline preload="none"></video>
-  <button type="button" id="reel-close" aria-label="Close showreel">Close</button>
-</div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
